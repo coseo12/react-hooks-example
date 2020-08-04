@@ -1,24 +1,11 @@
 import React, { useReducer, useState } from 'react';
-import { v4 as uuid } from 'uuid';
-
-const initalState = {
-  toDos: [],
-};
-const ADD = 'add';
-const DEL = 'del';
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case ADD:
-      return { toDos: [...state.toDos, { text: action.payload, id: uuid() }] };
-    case DEL:
-      return {
-        toDos: state.toDos.filter((todo) => todo.id !== action.payload),
-      };
-    default:
-      return;
-  }
-};
+import reducer, {
+  initalState,
+  ADD,
+  DEL,
+  COMPLATE,
+  UNCOMPLATE,
+} from './reducer';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initalState);
@@ -50,6 +37,13 @@ function App() {
         {state.toDos.map((todo) => (
           <li key={todo.id}>
             <span>{todo.text}</span>
+            <button
+              onClick={() => dispatch({ type: COMPLATE, payload: todo.id })}
+            >
+              <span role="img" aria-labelledby="delete">
+                ⭕
+              </span>
+            </button>
             <button onClick={() => dispatch({ type: DEL, payload: todo.id })}>
               <span role="img" aria-labelledby="delete">
                 ❌
@@ -57,6 +51,34 @@ function App() {
             </button>
           </li>
         ))}
+      </ul>
+      <ul>
+        {state.complated.length > 0 && (
+          <>
+            <h2>Complated</h2>
+            {state.complated.map((todo) => (
+              <li key={todo.id}>
+                <span>{todo.text}</span>
+                <button
+                  onClick={() =>
+                    dispatch({ type: UNCOMPLATE, payload: todo.id })
+                  }
+                >
+                  <span role="img" aria-labelledby="delete">
+                    ❗
+                  </span>
+                </button>
+                <button
+                  onClick={() => dispatch({ type: DEL, payload: todo.id })}
+                >
+                  <span role="img" aria-labelledby="delete">
+                    ❌
+                  </span>
+                </button>
+              </li>
+            ))}
+          </>
+        )}
       </ul>
     </>
   );
